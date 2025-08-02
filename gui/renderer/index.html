@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self';">
+    <title>ConvertWemp - GIF to WebP Converter</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 헤더 -->
+        <header class="app-header">
+            <h1>🎬 ConvertWemp</h1>
+            <p>GIF to WebP 고품질 변환기</p>
+        </header>
+
+        <!-- 드래그 앤 드롭 영역 -->
+        <section class="drop-zone" id="dropZone">
+            <div class="drop-content">
+                <div class="drop-icon">📁</div>
+                <h2>GIF 파일들을 여기에 드롭하세요</h2>
+                <p>또는 <button class="browse-btn" id="browseBtn">파일 선택</button></p>
+                <small>여러 파일을 동시에 선택할 수 있습니다</small>
+            </div>
+        </section>
+
+        <!-- 설정 패널 -->
+        <section class="settings-panel">
+            <h3>변환 설정</h3>
+            <div class="settings-grid">
+                <div class="setting-item">
+                    <label for="qualitySlider">품질 (0-100):</label>
+                    <div class="slider-container">
+                        <input type="range" id="qualitySlider" min="0" max="100" value="75">
+                        <span id="qualityValue">75</span>
+                    </div>
+                </div>
+                
+                <div class="setting-item">
+                    <label for="effortSlider">압축 노력도 (0-6):</label>
+                    <div class="slider-container">
+                        <input type="range" id="effortSlider" min="0" max="6" value="6">
+                        <span id="effortValue">6</span>
+                    </div>
+                </div>
+                
+                <div class="setting-item">
+                    <label for="losslessCheck">무손실 압축:</label>
+                    <input type="checkbox" id="losslessCheck">
+                </div>
+            </div>
+            
+            <!-- 프리셋 버튼들 -->
+            <div class="preset-buttons">
+                <button class="preset-btn" data-preset="auto">🎯 자동최적화</button>
+                <button class="preset-btn" data-preset="quality">🎨 고품질</button>
+                <button class="preset-btn" data-preset="compression">📦 고압축</button>
+                <button class="preset-btn" data-preset="default">⚙️ 기본설정</button>
+            </div>
+        </section>
+
+        <!-- 파일 처리 목록 -->
+        <section class="file-list-section">
+            <h3>처리 목록</h3>
+            <div class="file-list" id="fileList">
+                <div class="empty-state">
+                    변환할 파일이 없습니다. 위에서 파일을 선택해주세요.
+                </div>
+            </div>
+        </section>
+
+        <!-- 전체 진행률 및 컨트롤 -->
+        <section class="progress-section">
+            <div class="overall-progress">
+                <div class="progress-info">
+                    <span id="progressText">대기 중...</span>
+                    <span id="progressStats">0/0 완료</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div class="control-buttons">
+                <button class="btn btn-primary" id="startBtn" disabled>
+                    ▶️ 변환 시작
+                </button>
+                <button class="btn btn-secondary" id="pauseBtn" disabled>
+                    ⏸️ 일시정지
+                </button>
+                <button class="btn btn-danger" id="stopBtn" disabled>
+                    ⏹️ 중지
+                </button>
+                <button class="btn btn-info" id="openFolderBtn" disabled>
+                    📁 결과 폴더 열기
+                </button>
+            </div>
+        </section>
+
+        <!-- 상태바 -->
+        <footer class="status-bar">
+            <div class="status-left">
+                <span id="statusText">준비</span>
+            </div>
+            <div class="status-right">
+                <span id="appVersion">v1.0.0</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 스크립트 -->
+    <script src="renderer.js"></script>
+</body>
+</html> 
