@@ -14,6 +14,10 @@
     "start": "node src/cli.js",
     "gui": "electron gui/main.cjs",
     "gui-dev": "NODE_ENV=development electron gui/main.cjs",
+    "build": "electron-builder",
+    "build-mac": "electron-builder --mac",
+    "build-win": "electron-builder --win",
+    "dist": "npm run build",
     "test": "node test/test.js",
     "benchmark": "node test/benchmark.js"
   },
@@ -49,5 +53,44 @@
   "bugs": {
     "url": "https://github.com/username/convertwemp/issues"
   },
-  "homepage": "https://github.com/username/convertwemp#readme"
+  "homepage": "https://github.com/username/convertwemp#readme",
+  "main": "gui/main.cjs",
+  "build": {
+    "appId": "com.convertwemp.app",
+    "productName": "ConvertWemp",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "gui/**/*",
+      "src/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.graphics-design",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        }
+      ]
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": ["x64"]
+        }
+      ]
+    }
+  }
 }
