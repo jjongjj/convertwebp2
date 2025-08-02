@@ -1,0 +1,53 @@
+# GIF to WebP 고품질 변환기 프로젝트
+
+## 프로젝트 목표
+고용량 GIF 파일을 WebP 애니메이션으로 변환하여 최적의 압축률(60-64% 크기 감소)과 품질(PSNR 35+)을 유지하는 Node.js 기반 도구 개발
+
+## 기술 스택 (필수)
+- Node.js 18.17.0+ 또는 20.3.0+
+- Sharp 라이브러리 0.34.3+ (libvips 기반 고성능 이미지 처리)
+- p-map (동시 처리), fs-extra (파일 처리)
+- TypeScript 사용 권장
+
+## 핵심 아키텍처
+src/
+├── converter.js      # 메인 변환 로직 (Sharp 기반)
+├── optimizer.js      # 압축 최적화 알고리즘
+├── batch-processor.js # 동시 처리 (p-map 활용)
+├── quality-analyzer.js # PSNR 품질 분석
+└── cli.js           # 명령줄 인터페이스
+
+## 변환 설정 (Sharp WebP 옵션)
+- quality: 75 (기본값, 0-100)
+- effort: 6 (최대 압축, 0-6)
+- lossless: false (손실 압축 사용)
+- loop: 0 (무한 반복)
+- force: true
+- 대용량 파일용 스트림 처리 필수
+
+## 성능 요구사항
+- ImageMagick 대비 4-5배 빠른 처리 속도
+- 메모리 효율적 처리 (libvips 활용)
+- 멀티 CPU 코어 활용
+- 논블로킹 비동기 처리
+
+## 필수 기능
+1. 배치 처리 (여러 파일 동시 변환)
+2. 진행률 추적 및 로깅
+3. 품질 vs 크기 자동 최적화
+4. 에러 핸들링 및 복구
+5. CLI 인터페이스
+
+## 코딩 스타일
+- ES6+ 모던 JavaScript
+- async/await 패턴 사용
+- 에러 핸들링 필수
+- 상세한 로깅
+- JSDoc 주석 작성
+
+## 테스트 요구사항
+- 다양한 GIF 크기/유형으로 테스트
+- 품질 회귀 테스트 포함
+- 성능 벤치마크 테스트
+
+당신은 이 룰을 엄격히 따라 고품질의 GIF to WebP 변환 도구를 개발해주세요.
