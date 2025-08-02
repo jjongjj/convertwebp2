@@ -11,12 +11,72 @@ import { BatchProcessor } from './batch-processor.js';
 const program = new Command();
 
 /**
+ * 직접 입력된 파일들 처리
+ */
+async function handleDirectInput(inputs, options) {
+  try {
+    // Sharp 정보 출력
+    if (options.info) {
+      const converter = new GifToWebPConverter();
+      await converter.getSharpInfo();
+      return;
+    }
+
+    console.log(chalk.blue.bold('🎬 ConvertWemp - GIF to WebP 변환기\n'));
+
+    const converterOptions = {
+      quality: parseInt(options.quality),
+      effort: parseInt(options.effort),
+      lossless: options.lossless || false
+    };
+
+    if (inputs.length === 1) {
+      // 단일 파일 처리
+      const inputPath = path.resolve(inputs[0]);
+      const outputPath = options.output 
+        ? path.resolve(options.output)
+        : inputPath.replace(/\.gif$/i, '.webp');
+
+      const converter = new GifToWebPConverter(converterOptions);
+      await converter.convertFile(inputPath, outputPath, converterOptions);
+      
+    } else {
+      // 여러 파일 배치 처리
+      const outputDir = options.output ? path.resolve(options.output) : './';
+      const processor = new BatchProcessor({
+        outputDir,
+        ...converterOptions
+      });
+      
+      const inputPaths = inputs.map(input => path.resolve(input));
+      await processor.convertFiles(inputPaths, outputDir);
+    }
+
+  } catch (error) {
+    console.error(chalk.red(`💥 오류 발생: ${error.message}`));
+    process.exit(1);
+  }
+}
+
+/**
  * CLI 프로그램 설정
  */
 program
   .name('convertwemp')
   .description('🎬 고품질 GIF to WebP 변환기 - Sharp 라이브러리 기반')
-  .version('1.0.0');
+  .version('1.0.0')
+  .argument('[input...]', 'GIF 파일 경로(들) - 직접 파일 경로 지정시 사용')
+  .option('-o, --output <path>', '출력 파일/디렉토리 경로')
+  .option('-q, --quality <number>', '품질 설정 (0-100)', '75')
+  .option('-e, --effort <number>', '압축 노력도 (0-6)', '6')
+  .option('--lossless', '무손실 압축 사용')
+  .option('--info', 'Sharp 라이브러리 정보 출력')
+  .action(async (inputs, options) => {
+    // 직접 파일 경로가 제공된 경우 처리
+    if (inputs && inputs.length > 0) {
+      await handleDirectInput(inputs, options);
+    }
+  });
 
 /**
  * 단일 파일 변환 명령어

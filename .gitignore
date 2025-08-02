@@ -86,9 +86,9 @@ dist/
 build/
 
 # Test files and temporary conversions
-examples/*.webp
 test/output/
 test/temp/
+test/benchmark_output/
 *.tmp
 
 # Log files
@@ -102,9 +102,13 @@ logs/
 temp/
 tmp/
 
+# Generated WebP files (exclude converted outputs)
+examples/*.webp
+
 # Large test files (keep small samples only)
-examples/*.gif
-!examples/sample.gif
+examples/medium-test.gif
+examples/large-*.gif
+examples/huge-*.gif
 
 # Performance test files
 benchmark/

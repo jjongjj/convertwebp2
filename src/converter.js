@@ -35,9 +35,10 @@ export class GifToWebPConverter {
    * 단일 GIF 파일을 WebP로 변환
    * @param {string} inputPath - 입력 GIF 파일 경로
    * @param {string} outputPath - 출력 WebP 파일 경로
+   * @param {Object} options - 변환 옵션
    * @returns {Promise<Object>} 변환 결과 정보
    */
-  async convertFile(inputPath, outputPath) {
+  async convertFile(inputPath, outputPath, options = {}) {
     try {
       console.log(`🔄 변환 시작: ${path.basename(inputPath)}`);
       
@@ -51,17 +52,20 @@ export class GifToWebPConverter {
       const inputStats = await fs.stat(inputPath);
       
       // Sharp를 사용한 GIF → WebP 변환
+      // 옵션 병합 (매개변수 options가 인스턴스 options보다 우선)
+      const webpOptions = {
+        quality: options.quality ?? this.options.quality,
+        effort: options.effort ?? this.options.effort,
+        lossless: options.lossless ?? this.options.lossless,
+        loop: options.loop ?? this.options.loop,
+        force: options.force ?? this.options.force
+      };
+
       const webpBuffer = await sharp(inputPath, {
         animated: true,
         limitInputPixels: false
       })
-        .webp({
-          quality: this.options.quality,
-          effort: this.options.effort,
-          lossless: this.options.lossless,
-          loop: this.options.loop,
-          force: this.options.force
-        })
+        .webp(webpOptions)
         .toBuffer();
 
       // 변환된 파일 저장
@@ -232,6 +236,45 @@ export class GifToWebPConverter {
       return null;
     }
   }
+}
+
+// 편의를 위한 개별 함수들 export
+const converter = new GifToWebPConverter();
+
+/**
+ * 단일 GIF 파일을 WebP로 변환하는 편의 함수
+ * @param {string} inputPath - 입력 GIF 파일 경로
+ * @param {string} outputPath - 출력 WebP 파일 경로
+ * @param {Object} options - 변환 옵션
+ * @returns {Promise<Object>} 변환 결과
+ */
+export async function convertGifToWebp(inputPath, outputPath, options = {}) {
+  return await converter.convertFile(inputPath, outputPath, options);
+}
+
+/**
+ * 여러 GIF 파일을 배치로 변환하는 편의 함수
+ * @param {Array<string>} inputPaths - 입력 GIF 파일 경로들
+ * @param {string} outputDir - 출력 디렉토리
+ * @param {Object} options - 변환 옵션
+ * @returns {Promise<Array>} 변환 결과들
+ */
+export async function batchConvert(inputPaths, outputDir, options = {}) {
+  // BatchProcessor를 동적으로 import하여 사용
+  const { BatchProcessor } = await import('./batch-processor.js');
+  const processor = new BatchProcessor({
+    outputDir,
+    ...options
+  });
+  return await processor.convertFiles(inputPaths, outputDir);
+}
+
+/**
+ * Sharp 정보를 가져오는 편의 함수
+ * @returns {Promise<Object>} Sharp 정보
+ */
+export async function getSharpInfo() {
+  return await converter.getSharpInfo();
 }
 
 export default GifToWebPConverter; 
